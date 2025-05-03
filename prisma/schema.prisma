@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  Administrator
+  Barber
+}
+
+model Employee {
+  id          String        @id @default(uuid())
+  name        String
+  email       String        @unique
+  role        Role          @default(Barber)
+  appointments Appointment[]
+}
+
+model Client {
+  id           String        @id @default(uuid())
+  name         String
+  email        String        @unique
+  password     String
+  appointments Appointment[]
+}
+
+model Product {
+  id          String        @id @default(uuid())
+  name        String
+  salePrice   Float
+  profit      Float
+  transactions Transaction[]
+}
+
+model Service {
+  id          String        @id @default(uuid())
+  name        String
+  price       Float
+  duration    Int // in minutes
+  appointments Appointment[]
+}
+
+model Appointment {
+  id          String        @id @default(uuid())
+  clientId    String
+  serviceId   String
+  barberId    String
+  dateTime    DateTime
+  client      Client        @relation(fields: [clientId], references: [id])
+  service     Service       @relation(fields: [serviceId], references: [id])
+  barber      Employee      @relation(fields: [barberId], references: [id])
+  transactions Transaction[]
+}
+
+model Transaction {
+  id            String       @id @default(uuid())
+  appointmentId String?
+  productId     String?
+  amount        Float
+  createdAt     DateTime     @default(now())
+  appointment   Appointment? @relation(fields: [appointmentId], references: [id])
+  product       Product?     @relation(fields: [productId], references: [id])
+}
