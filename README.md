@@ -58,6 +58,7 @@ This repository contains the **NestJS** backend for **Na Regua**, a barbershop m
 │   ├── app.module.ts        # Root module
 │   └── main.ts              # Application entrypoint
 ├── .env                     # Environment variables
+├── .env.example             # Example for .env
 ├── .eslintrc.js             # ESLint configuration
 ├── .gitignore               # Git ignore rules
 ├── .prettierrc              # Prettier configuration

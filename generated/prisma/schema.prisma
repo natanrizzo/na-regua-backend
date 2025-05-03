@@ -8,6 +8,58 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Barber {
-  id String @id @default(uuid())
+enum Role {
+  Administrator
+  Barber
+  Client
+}
+
+model User {
+  id       String @id @default(uuid())
+  name     String
+  email    String @unique
+  password String
+  role     Role   @default(Client)
+
+  appointmentsAsClient Appointment[] @relation("ClientAppointments")
+  appointmentsAsBarber Appointment[] @relation("BarberAppointments")
+}
+
+model Product {
+  id           String        @id @default(uuid())
+  name         String
+  salePrice    Float
+  profit       Float
+  transactions Transaction[]
+}
+
+model Service {
+  id           String        @id @default(uuid())
+  name         String
+  price        Float
+  duration     Int // in minutes
+  appointments Appointment[]
+}
+
+model Appointment {
+  id        String   @id @default(uuid())
+  serviceId String
+  clientId  String
+  barberId  String
+  dateTime  DateTime
+
+  service      Service       @relation(fields: [serviceId], references: [id])
+  client       User          @relation("ClientAppointments", fields: [clientId], references: [id])
+  barber       User          @relation("BarberAppointments", fields: [barberId], references: [id])
+  transactions Transaction[]
+}
+
+model Transaction {
+  id            String       @id @default(uuid())
+  appointmentId String?
+  productId     String?
+  amount        Float
+  createdAt     DateTime     @default(now())
+  appointment   Appointment? @relation(fields: [appointmentId], references: [id])
+  product       Product?     @relation(fields: [productId], references: [id])
 }

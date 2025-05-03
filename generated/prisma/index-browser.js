@@ -120,8 +120,42 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
-exports.Prisma.BarberScalarFieldEnum = {
-  id: 'id'
+exports.Prisma.UserScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  email: 'email',
+  password: 'password',
+  role: 'role'
+};
+
+exports.Prisma.ProductScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  salePrice: 'salePrice',
+  profit: 'profit'
+};
+
+exports.Prisma.ServiceScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  price: 'price',
+  duration: 'duration'
+};
+
+exports.Prisma.AppointmentScalarFieldEnum = {
+  id: 'id',
+  serviceId: 'serviceId',
+  clientId: 'clientId',
+  barberId: 'barberId',
+  dateTime: 'dateTime'
+};
+
+exports.Prisma.TransactionScalarFieldEnum = {
+  id: 'id',
+  appointmentId: 'appointmentId',
+  productId: 'productId',
+  amount: 'amount',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -134,9 +168,22 @@ exports.Prisma.QueryMode = {
   insensitive: 'insensitive'
 };
 
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
+};
+exports.Role = exports.$Enums.Role = {
+  Administrator: 'Administrator',
+  Barber: 'Barber',
+  Client: 'Client'
+};
 
 exports.Prisma.ModelName = {
-  Barber: 'Barber'
+  User: 'User',
+  Product: 'Product',
+  Service: 'Service',
+  Appointment: 'Appointment',
+  Transaction: 'Transaction'
 };
 
 /**
