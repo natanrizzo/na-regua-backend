@@ -45,9 +45,6 @@ This repository contains the **NestJS** backend for **Na Regua**, a barbershop m
 
 ```
 /NA-REGUA-BACKEND
-├── .godo/                   # Godot Engine files (unused)
-├── generated/               # Auto-generated artifacts
-├── node_modules/            # Dependencies
 ├── prisma/                  # Prisma schema & migrations
 ├── src/
 │   ├── appointment/         # Appointment module
