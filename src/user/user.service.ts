@@ -25,11 +25,23 @@ export class UserService {
         });
     }
 
-    async updateUser(id: string, { name }: UpdateUserDTO) {
+    async getUserById(id: string): Promise<Omit<User, 'password'> | undefined> {
+        return await this.prisma.user.findUnique({
+            where: { id },
+            omit: {
+                password: true,
+            },
+        });
+    }
+
+    async updateUser(id: string, { name }: UpdateUserDTO): Promise<Omit<User, 'password'>> {
         return await this.prisma.user.update({
             where: { id },
             data: {
                 name
+            },
+            omit: {
+                password: true
             }
         });
     }
