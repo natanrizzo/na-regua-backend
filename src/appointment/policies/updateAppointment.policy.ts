@@ -10,11 +10,11 @@ export class UpdateAppointmentPolicy implements PolicyHandler {
             body: any 
     }): boolean {
         const appointment = new AppointmentModel(
-                context.params.id,
-                new Date(context.body.date),
-                context.body.serviceId,
-                context.body.clientId,
-                context.body.barberId
+            context.params.id,
+            new Date(context.body.dateTime),
+            context.body.serviceId,
+            context.body.clientId,
+            context.body.barberId
         )
 
         return ability.can('update', appointment);
