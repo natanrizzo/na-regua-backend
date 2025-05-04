@@ -1,0 +1,33 @@
+import { Body, Controller, Param, Patch, Post, UseGuards } from "@nestjs/common";
+import { ProductService } from "./product.service";
+import { PoliciesGuard } from "src/casl/policies/policies.guard";
+import { CheckPolicies } from "src/casl/policies/policies.decorator";
+import { UpdateProductPolicy } from "./policies/updateProduct.policy";
+import { UpdateProductDTO } from "./dto/updateProduct.dto";
+import { CreateProductPolicy } from "./policies/createProduct.policy";
+import { CreateProductDTO } from "./dto/createProduct.dto";
+
+@Controller('product')
+@UseGuards(PoliciesGuard)
+export class ProductController {
+    constructor(
+        private readonly productService: ProductService
+    ) {}
+
+    @Post()
+    @CheckPolicies(new CreateProductPolicy())
+    async createProduct(
+        @Body() createProductDTO: CreateProductDTO
+    ) {
+        await this.productService.createProduct(createProductDTO);
+    }
+
+    @Patch(':id')
+    @CheckPolicies(new UpdateProductPolicy())
+    async updateProduct(
+        @Param('id') id: string,
+        @Body() updateProductDTO: UpdateProductDTO
+    ) {
+        await this.productService.updateProduct(id, updateProductDTO);
+    }
+}

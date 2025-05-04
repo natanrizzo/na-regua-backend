@@ -6,7 +6,7 @@ export class UpdateAppointmentPolicy implements PolicyHandler {
     handle(
         ability: AppAbility, 
         context: { 
-            params: { id: string }; 
+            params: { id: string },
             body: any 
     }): boolean {
         const appointment = new AppointmentModel(
