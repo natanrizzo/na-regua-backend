@@ -40,4 +40,10 @@ export class ProductService {
             }
         });
     }
+
+    async deleteProduct(id: string) {
+        return await this.prisma.product.delete({
+            where: { id }
+        });
+    }
 }

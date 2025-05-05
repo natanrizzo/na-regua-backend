@@ -33,7 +33,7 @@ export class TransactionService {
             include: {
                 appointment: true,
                 product: true,
-            }
+            },
         });
     }
 

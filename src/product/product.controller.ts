@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from "@nestjs/common";
 import { ProductService } from "./product.service";
 import { PoliciesGuard } from "src/casl/policies/policies.guard";
 import { CheckPolicies } from "src/casl/policies/policies.decorator";
@@ -7,6 +7,7 @@ import { UpdateProductDTO } from "./dto/updateProduct.dto";
 import { CreateProductPolicy } from "./policies/createProduct.policy";
 import { CreateProductDTO } from "./dto/createProduct.dto";
 import { Public } from "src/auth/public.decorator";
+import { DeleteProductPolicy } from "./policies/deleteProduct.policy";
 
 @Controller('product')
 @UseGuards(PoliciesGuard)
@@ -45,5 +46,13 @@ export class ProductController {
         @Body() updateProductDTO: UpdateProductDTO
     ) {
         return await this.productService.updateProduct(id, updateProductDTO);
+    }
+
+    @Delete('/:id')
+    @CheckPolicies(new DeleteProductPolicy())
+    async deleteProduct(
+        @Param('id') id: string
+    ) {
+        return await this.productService.deleteProduct(id);
     }
 }
