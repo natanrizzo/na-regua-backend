@@ -27,14 +27,33 @@ export class AppointmentService {
         })
     }
 
-    async getOneAppointment(id: string): Promise<Appointment | undefined> {
+    async getAppointment(id: string): Promise<Appointment | undefined> {
         return await this.prisma.appointment.findUnique({
-            where: { id }
+            where: { id },
+            include: {
+                barber: {
+                   omit: { password: true } 
+                },
+                client: {
+                    omit: { password: true }
+                },
+                service: true,
+                transactions: true
+            }
         });
     }
 
-    async getAllAppointments(): Promise<Appointment[]> {
-        return await this.prisma.appointment.findMany();
+    async getAppointments(): Promise<Appointment[]> {
+        return await this.prisma.appointment.findMany({
+            include: {
+                barber: {
+                    omit: { password: true },
+                },
+                client: {
+                    omit: { password: true }
+                }
+            }
+        });
     }
 
     async updateAppointment(id: string, { dateTime }: UpdateAppointmentDTO) {

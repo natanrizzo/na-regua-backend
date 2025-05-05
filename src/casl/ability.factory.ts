@@ -26,7 +26,7 @@ export class AbilityFactory {
     
         } else if (user.role === 'Barber') {
             can('create', AppointmentModel);
-            can('read', AppointmentModel);
+            can('read', AppointmentModel, { barberId: user.id });
             can('update', AppointmentModel, { barberId: user.id });
             cannot('delete', AppointmentModel);
 
@@ -50,7 +50,7 @@ export class AbilityFactory {
 
             // Appointment Rules
             cannot('create', AppointmentModel);
-            can('read', AppointmentModel);
+            can('read', AppointmentModel, { clientId: user.id });
             cannot('update', AppointmentModel);
             cannot('delete',AppointmentModel);
         }
