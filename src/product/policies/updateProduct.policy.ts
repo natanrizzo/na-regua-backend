@@ -12,8 +12,8 @@ export class UpdateProductPolicy implements PolicyHandler {
     ): boolean {
         const product = new ProductModel(
             context.body.name,
-            Number(context.body.salePrice),
-            Number(context.body.profit),
+            context.body.salePrice,
+            context.body.profit,
             context.params.id,
         );
 

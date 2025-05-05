@@ -6,6 +6,7 @@ import { UpdateProductPolicy } from "./policies/updateProduct.policy";
 import { UpdateProductDTO } from "./dto/updateProduct.dto";
 import { CreateProductPolicy } from "./policies/createProduct.policy";
 import { CreateProductDTO } from "./dto/createProduct.dto";
+import { Public } from "src/auth/public.decorator";
 
 @Controller('product')
 @UseGuards(PoliciesGuard)
@@ -23,11 +24,13 @@ export class ProductController {
     }
 
     @Get('/')
+    @Public()
     async getProducts() {
         return await this.productService.getProducts();
     }
 
     @Get('/:id')
+    @Public()
     async getOneProductById(
         @Param('id') id: string
     ) {

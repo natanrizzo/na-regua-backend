@@ -14,7 +14,7 @@ type Subjects =
     | InferSubjects<typeof ProductModel>
     |'all';
 
-    export type AppAbility = PureAbility<[Action, Subjects], PrismaQuery>;
+export type AppAbility = PureAbility<[Action, Subjects], PrismaQuery>;
 
 @Injectable()
 export class AbilityFactory {

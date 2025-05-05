@@ -4,6 +4,7 @@ import { UpdateUserDTO } from "./dto/updateUser.dto";
 import { PoliciesGuard } from "src/casl/policies/policies.guard";
 import { CheckPolicies } from "src/casl/policies/policies.decorator";
 import { UpdateUserPolicy } from "./policies/updateUser.policy";
+import { Public } from "src/auth/public.decorator";
 
 @Controller("users")
 @UseGuards(PoliciesGuard)
@@ -13,6 +14,7 @@ export class UserController {
     ) {}
 
     @Get("/:id")
+    @Public()
     async getUserById(
         @Param('id') id: string
     ) {
