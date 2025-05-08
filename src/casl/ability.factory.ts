@@ -41,9 +41,9 @@ export class AbilityFactory {
             cannot('delete', ProductModel);
 
             // Appointment Rules
-            can('create', AppointmentModel);
+            cannot('create', AppointmentModel);
             can('read', AppointmentModel, { barberId: user.id });
-            can('update', AppointmentModel, { barberId: user.id });
+            cannot('update', AppointmentModel, { barberId: user.id });
             cannot('delete', AppointmentModel);
 
             // Service Rules
@@ -66,10 +66,10 @@ export class AbilityFactory {
             cannot('delete', ProductModel);
 
             // Appointment Rules
-            cannot('create', AppointmentModel);
+            can('create', AppointmentModel);
             can('read', AppointmentModel, { clientId: user.id });
-            cannot('update', AppointmentModel);
-            cannot('delete',AppointmentModel);
+            can('update', AppointmentModel, { clientId: user.id });
+            can('delete', AppointmentModel, { clientId: user.id });
 
             // Service Rules
             cannot('create', ServiceModel);
