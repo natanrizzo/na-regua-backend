@@ -4,14 +4,16 @@ import { Injectable } from "@nestjs/common";
 import { User } from "generated/prisma";
 import { AppointmentModel } from "src/models/appointment.model";
 import { ProductModel } from "src/models/product.model";
+import { ServiceModel } from "src/models/service.model";
 import { UserModel } from "src/models/user.model";
 
 type Action = 'manage' | 'create' | 'read' | 'update' | 'delete';
 
 type Subjects = 
-    InferSubjects<typeof AppointmentModel> 
+    | InferSubjects<typeof AppointmentModel> 
     | InferSubjects<typeof UserModel> 
     | InferSubjects<typeof ProductModel>
+    | InferSubjects<typeof ServiceModel>
     |'all';
 
 export type AppAbility = PureAbility<[Action, Subjects], PrismaQuery>;
@@ -44,6 +46,12 @@ export class AbilityFactory {
             can('update', AppointmentModel, { barberId: user.id });
             cannot('delete', AppointmentModel);
 
+            // Service Rules
+            cannot('create', ServiceModel);
+            can('read', ServiceModel);
+            cannot('update', ServiceModel);
+            cannot('delete', ServiceModel);
+
         } else {
             // User Rules
             can('create', UserModel);
@@ -62,6 +70,12 @@ export class AbilityFactory {
             can('read', AppointmentModel, { clientId: user.id });
             cannot('update', AppointmentModel);
             cannot('delete',AppointmentModel);
+
+            // Service Rules
+            cannot('create', ServiceModel);
+            can('read', ServiceModel);
+            cannot('update', ServiceModel);
+            cannot('delete', ServiceModel);
         }
 
         function detectSubjectType(object: unknown): any {
@@ -75,6 +89,10 @@ export class AbilityFactory {
 
             if (object instanceof ProductModel) {
                 return ProductModel;
+            }
+
+            if (object instanceof ServiceModel) {
+                return ServiceModel
             }
 
             return (object as any).constructor;
