@@ -43,7 +43,7 @@ export class AbilityFactory {
             // Appointment Rules
             cannot('create', AppointmentModel);
             can('read', AppointmentModel, { barberId: user.id });
-            cannot('update', AppointmentModel, { barberId: user.id });
+            cannot('update', AppointmentModel);
             cannot('delete', AppointmentModel);
 
             // Service Rules

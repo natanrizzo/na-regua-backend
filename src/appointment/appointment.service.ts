@@ -1,13 +1,18 @@
-import { Injectable } from "@nestjs/common";
-import { Appointment } from "generated/prisma";
+import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
+import { Appointment, User } from "generated/prisma";
 import { PrismaService } from "src/prisma/prisma.service";
 import { CreateAppointmentDTO } from "./dto/createAppointment.dto";
 import { UpdateAppointmentDTO } from "./dto/updateAppointment.dto";
+import { Role } from "src/auth/roles/role.enum";
+import { AbilityFactory } from "src/casl/ability.factory";
+import { accessibleBy } from "@casl/prisma";
+import { AppointmentModel } from "src/models/appointment.model";
 
 @Injectable()
 export class AppointmentService {
     constructor(
-        private readonly prisma: PrismaService
+        private readonly prisma: PrismaService,
+        private readonly abilityFactory: AbilityFactory,
     ) {}
 
     async createAppointment({ serviceId, clientId, barberId, dateTime }: CreateAppointmentDTO): Promise<Appointment> {
@@ -27,8 +32,9 @@ export class AppointmentService {
         })
     }
 
-    async getAppointment(id: string): Promise<Appointment | undefined> {
-        return await this.prisma.appointment.findUnique({
+    async getAppointment(user: User, id: string): Promise<Appointment | undefined> {
+        
+        const appt = await this.prisma.appointment.findUnique({
             where: { id },
             include: {
                 barber: {
@@ -41,17 +47,55 @@ export class AppointmentService {
                 transactions: true
             }
         });
+
+        if (!appt) throw new NotFoundException(`Appointment ${id} not found`);
+
+        const subject = new AppointmentModel(
+            appt.id,
+            appt.dateTime,
+            appt.serviceId,
+            appt.clientId,
+            appt.barberId
+        );
+
+        const ability = this.abilityFactory.defineAbilityFor(user);
+        if (!ability.can('read', subject)) {
+            throw new ForbiddenException(`You cannot access appointment ${id}`);
+        }
+        
+        return appt;
     }
 
-    async getAppointments(): Promise<Appointment[]> {
+    async getAppointments(
+        user: User, 
+        barberIdOverride?: string, 
+        clientIdOverride?: string
+    ): Promise<Appointment[]> {
+        const ability = this.abilityFactory.defineAbilityFor(user);
+        let whereFilter;
+
+        if (user.role === 'Administrator') {
+            if (barberIdOverride) {
+                whereFilter = { barberId: barberIdOverride };
+            }
+            else if (clientIdOverride) {
+                whereFilter = { clientId: clientIdOverride };
+            }
+        } else {
+            whereFilter = accessibleBy(ability).AppointmentModel;
+        }
+
         return await this.prisma.appointment.findMany({
+            where: whereFilter,
             include: {
                 barber: {
                     omit: { password: true },
                 },
                 client: {
                     omit: { password: true }
-                }
+                },
+                service: true,
+                transactions: true
             }
         });
     }
@@ -62,6 +106,12 @@ export class AppointmentService {
             data: {
                 dateTime,
             },
+        });
+    }
+
+    async deleteAppointment(id: string) {
+        return await this.prisma.appointment.delete({
+            where: { id }
         });
     }
 }
