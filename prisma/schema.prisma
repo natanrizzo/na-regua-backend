@@ -30,6 +30,7 @@ model Product {
   name         String
   salePrice    Float
   profit       Float
+  imageUrl     String?
   transactions Transaction[]
 }
 

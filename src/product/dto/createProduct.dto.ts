@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber } from "class-validator";
+import { IsNotEmpty, IsNumber, IsOptional } from "class-validator";
 
 export class CreateProductDTO {
     @IsNotEmpty()
@@ -9,4 +9,7 @@ export class CreateProductDTO {
 
     @IsNumber()
     profit: number;
+
+    @IsOptional()
+    imageUrl: string;
 }

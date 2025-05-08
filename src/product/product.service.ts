@@ -10,12 +10,13 @@ export class ProductService {
         private readonly prisma: PrismaService
     ) {}
 
-    async createProduct({ name, salePrice, profit }: CreateProductDTO): Promise<Product> {
+    async createProduct({ name, salePrice, profit, imageUrl }: CreateProductDTO): Promise<Product> {
         return await this.prisma.product.create({
             data: {
                 name,
                 salePrice,
                 profit,
+                imageUrl
             }
         });
     }
