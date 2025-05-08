@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { User } from "generated/prisma";
 import { PrismaService } from "src/prisma/prisma.service";
 
 @Injectable()
@@ -7,7 +8,7 @@ export class FinancialService {
         private readonly prisma: PrismaService
     ) {}
 
-    async getDailyRevenue() {
+    async getRevenueByDay(user: User) {
         return await this.prisma.transaction.groupBy({
             by: ['createdAt'],
             _sum: { amount: true },
@@ -15,7 +16,7 @@ export class FinancialService {
         });
     }
 
-    async getRevenueByAppointment() {
+    async getRevenueByAppointment(user: User) {
         const transactions = await this.prisma.transaction.groupBy({
             by: ['appointmentId', 'amount'],
             where: { appointmentId: { not: null } },
@@ -54,7 +55,7 @@ export class FinancialService {
     }
 
 
-    async getRevenueByProduct() {
+    async getRevenueByProduct(user: User) {
         const transactions = await this.prisma.transaction.groupBy({
             by: ['productId'],
             where: { productId: { not: null } },
