@@ -6,6 +6,7 @@ import { Role } from "src/auth/roles/role.enum";
 import { AppointmentModel } from "src/models/appointment.model";
 import { ProductModel } from "src/models/product.model";
 import { ServiceModel } from "src/models/service.model";
+import { TransactionModel } from "src/models/transaction.model";
 import { UserModel } from "src/models/user.model";
 
 type Action = 'manage' | 'create' | 'read' | 'update' | 'delete';
@@ -15,6 +16,7 @@ type Subjects =
     | InferSubjects<typeof UserModel> 
     | InferSubjects<typeof ProductModel>
     | InferSubjects<typeof ServiceModel>
+    | InferSubjects<typeof TransactionModel>
     |'all';
 
 export type AppAbility = PureAbility<[Action, Subjects], PrismaQuery>;
@@ -52,6 +54,9 @@ export class AbilityFactory {
             cannot('update', ServiceModel);
             cannot('delete', ServiceModel);
 
+            // Transaction Rules
+            cannot('read', TransactionModel);
+
         } else {
             // User Rules
             cannot('create', UserModel);
@@ -76,6 +81,9 @@ export class AbilityFactory {
             can('read', ServiceModel);
             cannot('update', ServiceModel);
             cannot('delete', ServiceModel);
+
+            // Transaction Rules
+            cannot('read', TransactionModel);
         }
 
         function detectSubjectType(object: unknown): any {
@@ -92,7 +100,11 @@ export class AbilityFactory {
             }
 
             if (object instanceof ServiceModel) {
-                return ServiceModel
+                return ServiceModel;
+            }
+
+            if (object instanceof TransactionModel) {
+                return TransactionModel;
             }
 
             return (object as any).constructor;
