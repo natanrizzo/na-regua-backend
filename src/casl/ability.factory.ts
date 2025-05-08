@@ -2,6 +2,7 @@ import { AbilityBuilder, PureAbility, InferSubjects } from "@casl/ability";
 import { createPrismaAbility, PrismaQuery } from "@casl/prisma";
 import { Injectable } from "@nestjs/common";
 import { User } from "generated/prisma";
+import { Role } from "src/auth/roles/role.enum";
 import { AppointmentModel } from "src/models/appointment.model";
 import { ProductModel } from "src/models/product.model";
 import { ServiceModel } from "src/models/service.model";
@@ -28,11 +29,10 @@ export class AbilityFactory {
     
         } else if (user.role === 'Barber') {
             // User
-            can('create', UserModel);
+            cannot('create', UserModel);
             can('read', UserModel);
             can('update', UserModel, { id: user.id });
             cannot('delete', UserModel);
-
 
             // Product Rules
             cannot('create', ProductModel);
@@ -54,9 +54,9 @@ export class AbilityFactory {
 
         } else {
             // User Rules
-            can('create', UserModel);
+            cannot('create', UserModel);
             can('read', UserModel);
-            can('update', UserModel, { id: user.id });
+            can('update', UserModel, { id: user.id, role: Role.Client });
             cannot('delete', UserModel);
 
             //Product Rules

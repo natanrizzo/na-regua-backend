@@ -9,12 +9,15 @@ export class UserService {
         private readonly prisma: PrismaService
     ) {}
 
-    async createUser(user: { name, email, password }): Promise<User> {
+    async createUser(user: { name, email, password }): Promise<Omit<User, 'password'>> {
         return await this.prisma.user.create({
             data: {
                 name: user.name,
                 email: user.email,
                 password: user.password
+            },
+            omit: {
+                password: true
             }
         });
     }
@@ -40,6 +43,15 @@ export class UserService {
             data: {
                 name
             },
+            omit: {
+                password: true
+            }
+        });
+    }
+
+    async deleteUser(id: string): Promise<Omit<User, 'password'>> {
+        return await this.prisma.user.delete({
+            where: { id },
             omit: {
                 password: true
             }

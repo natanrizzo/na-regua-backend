@@ -1,10 +1,12 @@
-import { Body, Controller, Get, Param, Patch, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { UpdateUserDTO } from "./dto/updateUser.dto";
 import { PoliciesGuard } from "src/casl/policies/policies.guard";
 import { CheckPolicies } from "src/casl/policies/policies.decorator";
 import { UpdateUserPolicy } from "./policies/updateUser.policy";
-import { Public } from "src/auth/public.decorator";
+import { DeleteUserPolicy } from "./policies/deleteUser.policy";
+import { CreateUserDTO } from "./dto/createUser.dto";
+import { CreateUserPolicy } from "./policies/createUser.policy";
 
 @Controller("users")
 @UseGuards(PoliciesGuard)
@@ -13,8 +15,16 @@ export class UserController {
         private readonly userService: UserService
     ) {}
 
+    @Post("/")
+    @CheckPolicies(new CreateUserPolicy())
+    async createUser(
+        @Body() createUserDTO: CreateUserDTO
+    ) {
+        return await this.userService.createUser(createUserDTO);
+    }
+
+
     @Get("/:id")
-    @Public()
     async getUserById(
         @Param('id') id: string
     ) {
@@ -29,5 +39,13 @@ export class UserController {
         @Body() updateUserDTO: UpdateUserDTO,
     ) {
         return await this.userService.updateUser(id, updateUserDTO);
+    }
+
+    @Delete('/:id')
+    @CheckPolicies(new DeleteUserPolicy())
+    async deleteUser(
+        @Param('id') id: string
+    ) {
+        return await this.userService.deleteUser(id);
     }
 }

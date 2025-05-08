@@ -1,4 +1,5 @@
-import { IsEmail, IsOptional, IsString, IsStrongPassword } from "class-validator";
+import { IsEmail, IsEnum, IsOptional, IsString, IsStrongPassword } from "class-validator";
+import { Role } from "src/auth/roles/role.enum";
 
 export class UpdateUserDTO {
     @IsOptional()
@@ -12,4 +13,8 @@ export class UpdateUserDTO {
     @IsOptional()
     @IsStrongPassword()
     password?: string;
+
+    @IsOptional()
+    @IsEnum(Role)
+    role?: Role;
 }
