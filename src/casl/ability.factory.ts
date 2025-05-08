@@ -25,15 +25,24 @@ export class AbilityFactory {
             can('manage', 'all');
     
         } else if (user.role === 'Barber') {
-            can('create', AppointmentModel);
-            can('read', AppointmentModel, { barberId: user.id });
-            can('update', AppointmentModel, { barberId: user.id });
-            cannot('delete', AppointmentModel);
+            // User
+            can('create', UserModel);
+            can('read', UserModel);
+            can('update', UserModel, { id: user.id });
+            cannot('delete', UserModel);
 
+
+            // Product Rules
             cannot('create', ProductModel);
             can('read', ProductModel);
             cannot('update', ProductModel);
             cannot('delete', ProductModel);
+
+            // Appointment Rules
+            can('create', AppointmentModel);
+            can('read', AppointmentModel, { barberId: user.id });
+            can('update', AppointmentModel, { barberId: user.id });
+            cannot('delete', AppointmentModel);
 
         } else {
             // User Rules
