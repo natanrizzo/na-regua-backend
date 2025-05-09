@@ -55,7 +55,9 @@ export class AbilityFactory {
             cannot('delete', ServiceModel);
 
             // Transaction Rules
-            cannot('read', TransactionModel);
+            can('create', TransactionModel);
+            can('read', TransactionModel);
+            cannot('update', TransactionModel);
 
         } else {
             // User Rules
@@ -83,7 +85,9 @@ export class AbilityFactory {
             cannot('delete', ServiceModel);
 
             // Transaction Rules
-            cannot('read', TransactionModel);
+            cannot('create', TransactionModel);
+            can('read', TransactionModel, { appointment: { clientId: user.id } });
+            cannot('update', TransactionModel);
         }
 
         function detectSubjectType(object: unknown): any {
