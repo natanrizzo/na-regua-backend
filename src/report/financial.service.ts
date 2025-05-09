@@ -1,50 +1,25 @@
-import { accessibleBy } from "@casl/prisma";
-import { ForbiddenException, Injectable } from "@nestjs/common";
-import { User } from "generated/prisma";
-import { AbilityFactory } from "src/casl/ability.factory";
-import { TransactionModel } from "src/models/transaction.model";
+import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 
 @Injectable()
 export class FinancialService {
     constructor(
         private readonly prisma: PrismaService,
-        private readonly abilityFactory: AbilityFactory
     ) {}
 
-    async getRevenueByDay(user: User) {
-        const ability = this.abilityFactory.defineAbilityFor(user);
-
-        if (!ability.can('read', TransactionModel)) {
-            throw new ForbiddenException('Access to financial reports denied');
-        }
-
-        const whereFilter = accessibleBy(ability).TransactionModel;
-
+    async getRevenueByDay() {
         return await this.prisma.transaction.groupBy({
             by: ['createdAt'],
-            where: whereFilter,
             _sum: { amount: true },
             orderBy: { createdAt: 'asc' },
         });
     }
 
-    async getRevenueByAppointment(user: User) {
-        const ability = this.abilityFactory.defineAbilityFor(user);
-
-        if (!ability.can('read', TransactionModel)) {
-            throw new ForbiddenException('Access to financial reports denied');
-        }
-
-        const whereFilter = accessibleBy(ability).TransactionModel;
-
+    async getRevenueByAppointment() {
         const transactions = await this.prisma.transaction.groupBy({
             by: ['appointmentId', 'amount'],
             where: {
-                AND: [
-                    { appointmentId: { not: null } },
-                    whereFilter,
-                ]
+                appointmentId: { not: null },
             },
             _sum: { amount: true },
         })
@@ -81,22 +56,11 @@ export class FinancialService {
     }
 
 
-    async getRevenueByProduct(user: User) {
-        const ability = this.abilityFactory.defineAbilityFor(user);
-
-        if (!ability.can('read', TransactionModel)) {
-            throw new ForbiddenException('Access to financial reports denied');
-        }
-
-        const whereFilter = accessibleBy(ability).TransactionModel;
-
+    async getRevenueByProduct() {
         const transactions = await this.prisma.transaction.groupBy({
             by: ['productId'],
             where: {
-                AND: [
-                    { productId: { not: null } },
-                    whereFilter,
-                ]
+                productId: { not: null },
             },
             _sum: { amount: true },
         });
