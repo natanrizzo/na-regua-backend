@@ -1,7 +1,7 @@
 import { AbilityBuilder, PureAbility, InferSubjects } from "@casl/ability";
-import { createPrismaAbility, PrismaQuery } from "@casl/prisma";
+import { createPrismaAbility, PrismaQuery, Subjects } from "@casl/prisma";
 import { Injectable } from "@nestjs/common";
-import { User } from "generated/prisma";
+import { Appointment, Product, Service, Transaction, User } from "generated/prisma";
 import { Role } from "src/auth/roles/role.enum";
 import { AppointmentModel } from "src/models/appointment.model";
 import { ProductModel } from "src/models/product.model";
@@ -11,20 +11,19 @@ import { UserModel } from "src/models/user.model";
 
 type Action = 'manage' | 'create' | 'read' | 'update' | 'delete';
 
-type Subjects = 
-    | InferSubjects<typeof AppointmentModel> 
-    | InferSubjects<typeof UserModel> 
-    | InferSubjects<typeof ProductModel>
-    | InferSubjects<typeof ServiceModel>
-    | InferSubjects<typeof TransactionModel>
-    |'all';
-
-export type AppAbility = PureAbility<[Action, Subjects], PrismaQuery>;
+export type AppAbility = PureAbility<[Action, Subjects<{
+    User: User,
+    Appointment: Appointment,
+    Product: Product,
+    Service: Service,
+    Transaction: Transaction
+    'all'
+}>], PrismaQuery>;
 
 @Injectable()
 export class AbilityFactory {
-    defineAbilityFor(user: User) {
-        const { can, cannot, rules } = new AbilityBuilder<AppAbility>(PureAbility);
+    defineAbilityFor(user: User): AppAbility {
+        const { can, cannot, build } = new AbilityBuilder<AppAbility>(createPrismaAbility,);
 
         if (user.role === 'Administrator') {
             can('manage', 'all');
@@ -114,6 +113,6 @@ export class AbilityFactory {
             return (object as any).constructor;
         }
 
-        return createPrismaAbility(rules, { detectSubjectType });
+        return build({ detectSubjectType });
     }
 }
