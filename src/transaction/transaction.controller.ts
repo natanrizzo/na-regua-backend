@@ -9,7 +9,7 @@ import { CheckPolicies } from "src/casl/policies/policies.decorator";
 import { CreateTransactionPolicy } from "./policies/createTransaction.policy";
 import { UpdateTransactionPolicy } from "./policies/updateTransaction.policy";
 
-@Controller('transaction')
+@Controller('transactions')
 @UseGuards(PoliciesGuard)
 export class TransactionController {
     constructor(

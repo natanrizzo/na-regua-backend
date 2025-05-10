@@ -8,6 +8,8 @@ import { CreateServicePolicy } from "./policies/createService.policy";
 import { UpdateServicePolicy } from "./policies/updateService.policy";
 import { DeleteServicePolicy } from "./policies/deleteService.policy";
 import { Public } from "src/auth/public.decorator";
+import { CurrentUser } from "src/auth/currentUser.decorator";
+import { User } from "generated/prisma";
 
 @Controller('services')
 @UseGuards(PoliciesGuard)
@@ -24,18 +26,19 @@ export class ServiceController {
         return this.serviceService.createService(createServiceDTO);
     }
 
-    @Public()
     @Get('/')
-    async getServices() {
-        return this.serviceService.getServices();
+    async getServices(
+        @CurrentUser() user: User
+    ) {
+        return this.serviceService.getServices(user);
     }
 
-    @Public()
     @Get('/:id')
     async getService(
-        @Param('id') id: string
+        @Param('id') id: string,
+        @CurrentUser() user: User
     ) {
-        return this.serviceService.getService(id);
+        return this.serviceService.getService(id, user);
     }
 
     @Patch('/:id')

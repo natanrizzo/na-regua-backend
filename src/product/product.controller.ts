@@ -11,7 +11,7 @@ import { DeleteProductPolicy } from "./policies/deleteProduct.policy";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from 'multer';
 
-@Controller('product')
+@Controller('products')
 @UseGuards(PoliciesGuard)
 export class ProductController {
     constructor(
@@ -37,7 +37,7 @@ export class ProductController {
         @UploadedFile() image: Express.Multer.File,
         @Body() createProductDTO: CreateProductDTO,
     ) {
-        createProductDTO.imageUrl = `/uploads/${image.filename}`;
+        createProductDTO.imageUrl = `/uploads/${image?.filename}`;
         return await this.productService.createProduct(createProductDTO);
     }
 
