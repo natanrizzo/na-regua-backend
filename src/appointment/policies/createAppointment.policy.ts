@@ -4,18 +4,8 @@ import { AppointmentModel } from "src/models/appointment.model";
 
 export class CreateAppointmentPolicy implements PolicyHandler {
     handle(
-        ability: AppAbility, 
-        context: {
-            body: any
-        }): boolean {
-        const appointment = new AppointmentModel(
-            '',
-            new Date(context.body.date),
-            context.body.serviceId,
-            context.body.clientId,
-            context.body.barberId,
-        );
-        
-        return ability.can('create', appointment);
+        ability: AppAbility
+    ): boolean {
+        return ability.can('create', AppointmentModel);
     }
 }

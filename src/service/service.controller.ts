@@ -9,7 +9,7 @@ import { UpdateServicePolicy } from "./policies/updateService.policy";
 import { DeleteServicePolicy } from "./policies/deleteService.policy";
 import { Public } from "src/auth/public.decorator";
 
-@Controller('service')
+@Controller('services')
 @UseGuards(PoliciesGuard)
 export class ServiceController {
     constructor (

@@ -17,7 +17,7 @@ export class AppointmentController {
         private readonly appointmentsService: AppointmentService
     ) {}
 
-    @Post(':id')
+    @Post('/')
     @CheckPolicies(new CreateAppointmentPolicy())
     async createAppointment(
         @Body() createAppointmentDTO: CreateAppointmentDTO

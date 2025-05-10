@@ -4,17 +4,8 @@ import { ProductModel } from "src/models/product.model";
 
 export class CreateProductPolicy implements PolicyHandler {
     handle(
-        ability: AppAbility, 
-        context: {
-            body: any
-        }
+        ability: AppAbility,
     ): boolean {
-        const product = new ProductModel(
-            context.body.name,
-            context.body.salePrice,
-            context.body.profit
-        );
-
-        return ability.can('create', product);
+        return ability.can('create', ProductModel);
     }
 }
