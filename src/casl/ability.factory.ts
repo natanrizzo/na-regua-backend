@@ -1,8 +1,9 @@
 import { AbilityBuilder, PureAbility, InferSubjects } from "@casl/ability";
 import { createPrismaAbility, PrismaQuery, Subjects } from "@casl/prisma";
 import { Injectable } from "@nestjs/common";
-import { Appointment, Product, Service, Transaction, User } from "generated/prisma";
+import { Appointment, Product, Service, Transaction, User, Address } from "generated/prisma";
 import { Role } from "src/auth/roles/role.enum";
+import { AddressModel } from "src/models/address.model";
 import { AppointmentModel } from "src/models/appointment.model";
 import { ProductModel } from "src/models/product.model";
 import { ServiceModel } from "src/models/service.model";
@@ -16,7 +17,8 @@ export type AppAbility = PureAbility<[Action, Subjects<{
     Appointment: Appointment,
     Product: Product,
     Service: Service,
-    Transaction: Transaction
+    Transaction: Transaction,
+    Address: Address,
     'all'
 }>], PrismaQuery>;
 
@@ -34,6 +36,12 @@ export class AbilityFactory {
             can('read', UserModel);
             can('update', UserModel, { id: user.id });
             cannot('delete', UserModel);
+
+            // Address
+            can("create", AddressModel, { userId: user.id });
+            can("read", AddressModel, { userId: user.id });
+            can("update", AddressModel, { userId: user.id });
+            can("delete", AddressModel, { userId: user.id });
 
             // Product Rules
             cannot('create', ProductModel);
@@ -64,6 +72,12 @@ export class AbilityFactory {
             can('read', UserModel);
             can('update', UserModel, { id: user.id, role: Role.Client });
             cannot('delete', UserModel);
+
+            // Address
+            can("create", AddressModel, { userId: user.id });
+            can("read", AddressModel, { userId: user.id });
+            can("update", AddressModel, { userId: user.id });
+            can("delete", AddressModel, { userId: user.id });
 
             //Product Rules
             cannot('create', ProductModel);
@@ -108,6 +122,10 @@ export class AbilityFactory {
 
             if (object instanceof TransactionModel) {
                 return TransactionModel;
+            }
+
+            if (object instanceof AddressModel) {
+                return AddressModel;
             }
 
             return (object as any).constructor;

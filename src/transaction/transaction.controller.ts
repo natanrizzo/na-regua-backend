@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, Patch, Post, Put, UseGuards } from "@nestjs/common";
 import { TransactionService } from "./transaction.service";
 import { CreateTransactionDTO } from "./dto/createTransaction.dto";
 import { CurrentUser } from "src/auth/currentUser.decorator";
@@ -39,7 +39,7 @@ export class TransactionController {
         return this.transactionService.getTransactionById(id, user);
     }
 
-    @Patch('/:id')
+    @Put('/:id')
     @CheckPolicies(new UpdateTransactionPolicy())
     async updateTransaction(
         @Body() updateTransactionDTO: UpdateTransactionDTO,
