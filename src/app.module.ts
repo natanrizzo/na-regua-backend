@@ -8,6 +8,7 @@ import { ProductModule } from './product/product.module';
 import { ReportModule } from './report/report.module';
 import { ServiceModule } from './service/service.module';
 import { TransactionModule } from './transaction/transaction.module';
+import { AddressModule } from './address/address.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { TransactionModule } from './transaction/transaction.module';
     PrismaModule,
     CaslModule,
     UserModule,
+    AddressModule,
     AppointmentModule,
     ProductModule,
     ReportModule,

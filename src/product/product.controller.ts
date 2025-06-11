@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { ProductService } from "./product.service";
 import { PoliciesGuard } from "src/casl/policies/policies.guard";
 import { CheckPolicies } from "src/casl/policies/policies.decorator";
@@ -56,7 +56,7 @@ export class ProductController {
     }
 
 
-    @Patch('/:id')
+    @Put('/:id')
     @CheckPolicies(new UpdateProductPolicy())
     async updateProduct(
         @Param('id') id: string,
