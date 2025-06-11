@@ -1,28 +1,31 @@
 import { AbilityBuilder, PureAbility, InferSubjects } from "@casl/ability";
-import { createPrismaAbility, PrismaQuery } from "@casl/prisma";
+import { createPrismaAbility, PrismaQuery, Subjects } from "@casl/prisma";
 import { Injectable } from "@nestjs/common";
-import { User } from "generated/prisma";
+import { Appointment, Product, Service, Transaction, User, Address } from "generated/prisma";
 import { Role } from "src/auth/roles/role.enum";
+import { AddressModel } from "src/models/address.model";
 import { AppointmentModel } from "src/models/appointment.model";
 import { ProductModel } from "src/models/product.model";
 import { ServiceModel } from "src/models/service.model";
+import { TransactionModel } from "src/models/transaction.model";
 import { UserModel } from "src/models/user.model";
 
 type Action = 'manage' | 'create' | 'read' | 'update' | 'delete';
 
-type Subjects = 
-    | InferSubjects<typeof AppointmentModel> 
-    | InferSubjects<typeof UserModel> 
-    | InferSubjects<typeof ProductModel>
-    | InferSubjects<typeof ServiceModel>
-    |'all';
-
-export type AppAbility = PureAbility<[Action, Subjects], PrismaQuery>;
+export type AppAbility = PureAbility<[Action, Subjects<{
+    User: User,
+    Appointment: Appointment,
+    Product: Product,
+    Service: Service,
+    Transaction: Transaction,
+    Address: Address,
+    'all'
+}>], PrismaQuery>;
 
 @Injectable()
 export class AbilityFactory {
-    defineAbilityFor(user: User) {
-        const { can, cannot, rules } = new AbilityBuilder<AppAbility>(PureAbility);
+    defineAbilityFor(user: User): AppAbility {
+        const { can, cannot, build } = new AbilityBuilder<AppAbility>(createPrismaAbility,);
 
         if (user.role === 'Administrator') {
             can('manage', 'all');
@@ -33,6 +36,12 @@ export class AbilityFactory {
             can('read', UserModel);
             can('update', UserModel, { id: user.id });
             cannot('delete', UserModel);
+
+            // Address
+            can("create", AddressModel, { userId: user.id });
+            can("read", AddressModel, { userId: user.id });
+            can("update", AddressModel, { userId: user.id });
+            can("delete", AddressModel, { userId: user.id });
 
             // Product Rules
             cannot('create', ProductModel);
@@ -52,12 +61,23 @@ export class AbilityFactory {
             cannot('update', ServiceModel);
             cannot('delete', ServiceModel);
 
+            // Transaction Rules
+            can('create', TransactionModel);
+            can('read', TransactionModel);
+            cannot('update', TransactionModel);
+
         } else {
             // User Rules
             cannot('create', UserModel);
             can('read', UserModel);
             can('update', UserModel, { id: user.id, role: Role.Client });
             cannot('delete', UserModel);
+
+            // Address
+            can("create", AddressModel, { userId: user.id });
+            can("read", AddressModel, { userId: user.id });
+            can("update", AddressModel, { userId: user.id });
+            can("delete", AddressModel, { userId: user.id });
 
             //Product Rules
             cannot('create', ProductModel);
@@ -76,6 +96,11 @@ export class AbilityFactory {
             can('read', ServiceModel);
             cannot('update', ServiceModel);
             cannot('delete', ServiceModel);
+
+            // Transaction Rules
+            cannot('create', TransactionModel);
+            can('read', TransactionModel, { appointment: { clientId: user.id } });
+            cannot('update', TransactionModel);
         }
 
         function detectSubjectType(object: unknown): any {
@@ -92,12 +117,20 @@ export class AbilityFactory {
             }
 
             if (object instanceof ServiceModel) {
-                return ServiceModel
+                return ServiceModel;
+            }
+
+            if (object instanceof TransactionModel) {
+                return TransactionModel;
+            }
+
+            if (object instanceof AddressModel) {
+                return AddressModel;
             }
 
             return (object as any).constructor;
         }
 
-        return createPrismaAbility(rules, { detectSubjectType });
+        return build({ detectSubjectType });
     }
 }

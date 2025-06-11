@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { ProductService } from "./product.service";
 import { PoliciesGuard } from "src/casl/policies/policies.guard";
 import { CheckPolicies } from "src/casl/policies/policies.decorator";
@@ -11,7 +11,7 @@ import { DeleteProductPolicy } from "./policies/deleteProduct.policy";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from 'multer';
 
-@Controller('product')
+@Controller('products')
 @UseGuards(PoliciesGuard)
 export class ProductController {
     constructor(
@@ -37,7 +37,7 @@ export class ProductController {
         @UploadedFile() image: Express.Multer.File,
         @Body() createProductDTO: CreateProductDTO,
     ) {
-        createProductDTO.imageUrl = `/uploads/${image.filename}`;
+        createProductDTO.imageUrl = `/uploads/${image?.filename}`;
         return await this.productService.createProduct(createProductDTO);
     }
 
@@ -56,7 +56,7 @@ export class ProductController {
     }
 
 
-    @Patch('/:id')
+    @Put('/:id')
     @CheckPolicies(new UpdateProductPolicy())
     async updateProduct(
         @Param('id') id: string,

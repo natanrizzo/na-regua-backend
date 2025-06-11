@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, UseGuards } from "@nestjs/common";
 import { PoliciesGuard } from "src/casl/policies/policies.guard";
 import { ServiceService } from "./service.service";
 import { CreateServiceDTO } from "./dto/createService.dto";
@@ -8,8 +8,10 @@ import { CreateServicePolicy } from "./policies/createService.policy";
 import { UpdateServicePolicy } from "./policies/updateService.policy";
 import { DeleteServicePolicy } from "./policies/deleteService.policy";
 import { Public } from "src/auth/public.decorator";
+import { CurrentUser } from "src/auth/currentUser.decorator";
+import { User } from "generated/prisma";
 
-@Controller('service')
+@Controller('services')
 @UseGuards(PoliciesGuard)
 export class ServiceController {
     constructor (
@@ -24,21 +26,22 @@ export class ServiceController {
         return this.serviceService.createService(createServiceDTO);
     }
 
-    @Public()
     @Get('/')
-    async getServices() {
-        return this.serviceService.getServices();
+    async getServices(
+        @CurrentUser() user: User
+    ) {
+        return this.serviceService.getServices(user);
     }
 
-    @Public()
     @Get('/:id')
     async getService(
-        @Param('id') id: string
+        @Param('id') id: string,
+        @CurrentUser() user: User
     ) {
-        return this.serviceService.getService(id);
+        return this.serviceService.getService(id, user);
     }
 
-    @Patch('/:id')
+    @Put('/:id')
     @CheckPolicies(new UpdateServicePolicy())
     async updateService(
         @Param('id') id: string,

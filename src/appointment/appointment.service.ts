@@ -33,12 +33,11 @@ export class AppointmentService {
     }
 
     async getAppointment(user: User, id: string): Promise<Appointment | undefined> {
-        
         const appt = await this.prisma.appointment.findUnique({
             where: { id },
             include: {
                 barber: {
-                   omit: { password: true } 
+                    omit: { password: true } 
                 },
                 client: {
                     omit: { password: true }
@@ -71,29 +70,29 @@ export class AppointmentService {
         barberIdOverride?: string, 
         clientIdOverride?: string
     ): Promise<Appointment[]> {
-        const ability = this.abilityFactory.defineAbilityFor(user);
         let whereFilter;
 
         if (user.role === 'Administrator') {
             if (barberIdOverride) {
                 whereFilter = { barberId: barberIdOverride };
             }
-            else if (clientIdOverride) {
+            if (clientIdOverride) {
                 whereFilter = { clientId: clientIdOverride };
             }
         } else {
-            whereFilter = accessibleBy(ability).AppointmentModel;
+            if (user.role === 'Barber') {
+                whereFilter = { barberId: user.id }
+            }
+            if (user.role === 'Client') {
+                whereFilter = { clientId: user.id }
+            }
         }
 
         return await this.prisma.appointment.findMany({
             where: whereFilter,
             include: {
-                barber: {
-                    omit: { password: true },
-                },
-                client: {
-                    omit: { password: true }
-                },
+                barber: { omit: { password: true } },
+                client: { omit: { password: true } },
                 service: true,
                 transactions: true
             }

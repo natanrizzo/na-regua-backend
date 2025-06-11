@@ -36,7 +36,8 @@ This repository contains the **NestJS** backend for **Na Regua**, a barbershop m
 - **TypeScript** – Typed superset of JavaScript  
 - **Prisma ORM** – Database toolkit and query builder  
 - **PostgreSQL** – Relational database  
-- **JWT Authentication** – Secure API access  
+- **JWT Authentication** – Secure API access
+- **CASL** - User permissions
 - **class-validator** & **class-transformer** – Request validation and transformation  
 
 ---
@@ -45,29 +46,33 @@ This repository contains the **NestJS** backend for **Na Regua**, a barbershop m
 
 ```
 /NA-REGUA-BACKEND
-├── prisma/                  # Prisma schema & migrations
-├── src/
-│   ├── appointment/         # Appointment module
-│   ├── client/              # Client module
-│   ├── employee/            # Employee module
-│   ├── product/             # Product module
-│   ├── service/             # Service module
-│   ├── transaction/         # Transaction module
-│   ├── report/              # Report module
-│   ├── prisma/              # PrismaService and client import
-│   ├── app.module.ts        # Root module
-│   └── main.ts              # Application entrypoint
-├── .env                     # Environment variables
-├── .env.example             # Example for .env
-├── .eslintrc.js             # ESLint configuration
-├── .gitignore               # Git ignore rules
-├── .prettierrc              # Prettier configuration
-├── LICENSE                  # MIT license
-├── nest-cli.json            # Nest CLI configuration
-├── package.json             # Project metadata & scripts
-├── tsconfig.json            # TypeScript configuration
-├── tsconfig.build.json      # Build configuration
-└── README.md                # This file
+├── prisma
+├── src
+│   ├── appointment
+│   ├── auth
+│   ├── casl
+│   ├── models
+│   ├── prisma
+│   ├── product
+│   ├── report
+│   ├── service
+│   ├── transaction
+│   ├── user
+│   ├── app.module.ts
+│   └── main.ts
+├── uploads
+├── .env
+├── .env.example
+├── .eslintrc.js
+├── .gitignore
+├── .prettierrc
+├── LICENSE
+├── nest-cli.json
+├── package-lock.json
+├── package.json
+├── README.md
+├── tsconfig.build.json
+└── tsconfig.json
 ```
 
 ---

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, UseGuards } from "@nestjs/common";
 import { PoliciesGuard } from "src/casl/policies/policies.guard";
 import { AppointmentService } from "./appointment.service";
 import { CheckPolicies } from "src/casl/policies/policies.decorator";
@@ -17,7 +17,7 @@ export class AppointmentController {
         private readonly appointmentsService: AppointmentService
     ) {}
 
-    @Post(':id')
+    @Post('/')
     @CheckPolicies(new CreateAppointmentPolicy())
     async createAppointment(
         @Body() createAppointmentDTO: CreateAppointmentDTO
@@ -42,7 +42,7 @@ export class AppointmentController {
         return await this.appointmentsService.getAppointment(user, id);
     }
 
-    @Patch(':id')
+    @Put(':id')
     @CheckPolicies(new UpdateAppointmentPolicy())
     async updateAppointment(
         @Param('id') id: string,

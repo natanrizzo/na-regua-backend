@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { CreateServiceDTO } from "./dto/createService.dto";
-import { Service } from "generated/prisma";
+import { Service, User } from "generated/prisma";
 import { UpdateServiceDTO } from "./dto/updateService.dto";
 
 @Injectable()
@@ -25,17 +25,20 @@ export class ServiceService {
     }
 
     async getService(
-        id: string
+        id: string,
+        user: User
     ): Promise<Service | undefined> {
         return await this.prisma.service.findUnique({
             where: { id },
-            include: { appointments: true}
+            include: { appointments: true ? user?.role === "Administrator" : false }
         });
     }
 
-    async getServices(): Promise<Service[]> {
+    async getServices(
+        user?: User
+    ): Promise<Service[]> {
         return await this.prisma.service.findMany({
-            include: { appointments: true }
+            include: { appointments: true ? user?.role === 'Administrator' : false }
         });
     }
 

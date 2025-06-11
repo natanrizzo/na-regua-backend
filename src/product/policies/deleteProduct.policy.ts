@@ -4,18 +4,8 @@ import { ProductModel } from "src/models/product.model";
 
 export class DeleteProductPolicy implements PolicyHandler {
     handle(
-        ability: AppAbility, 
-        context: {
-            params: { id: string },
-        }
+        ability: AppAbility,
     ): boolean {
-        const product = new ProductModel(
-            '',
-            0,
-            0,
-            context.params.id
-        );
-
-        return ability.can('delete', product);
+        return ability.can('delete', ProductModel);
     }
 }

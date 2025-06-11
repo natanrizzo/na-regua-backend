@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, UseGuards } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { UpdateUserDTO } from "./dto/updateUser.dto";
 import { PoliciesGuard } from "src/casl/policies/policies.guard";
@@ -23,7 +23,6 @@ export class UserController {
         return await this.userService.createUser(createUserDTO);
     }
 
-
     @Get("/:id")
     async getUserById(
         @Param('id') id: string
@@ -32,7 +31,7 @@ export class UserController {
     }
 
 
-    @Patch("/:id")
+    @Put("/:id")
     @CheckPolicies(new UpdateUserPolicy())
     async updateUser(
         @Param('id') id: string,

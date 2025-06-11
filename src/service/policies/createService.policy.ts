@@ -4,17 +4,9 @@ import { ServiceModel } from "src/models/service.model";
 
 export class CreateServicePolicy implements PolicyHandler {
     handle(
-        ability: AppAbility, 
-        context: {
-            body: any
-        }): boolean {
-        const service = new ServiceModel(
-            '',
-            context.body.name,
-            context.body.price,
-            context.body.duration
-        );
+        ability: AppAbility
+    ): boolean {
 
-        return ability.can('create', service);
+        return ability.can('create', ServiceModel);
     }
 }
