@@ -99,6 +99,20 @@ export class AppointmentService {
         });
     }
 
+    async getAppointmentsForDay(
+        start: Date,
+        end: Date
+    ) {
+        return await this.prisma.appointment.findMany({
+            where: {
+                dateTime: {
+                    gte: start,
+                    lt: end
+                }
+            }
+        });
+    }
+
     async updateAppointment(id: string, { dateTime }: UpdateAppointmentDTO) {
         return await this.prisma.appointment.update({
             where: { id },
