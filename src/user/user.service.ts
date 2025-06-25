@@ -45,7 +45,8 @@ export class UserService {
         }
 
         return await this.prisma.user.findMany({
-            where: { role: "Barber" }
+            where: { role: "Barber" },
+            omit: { password: true, email: true }
         })
     }
 
