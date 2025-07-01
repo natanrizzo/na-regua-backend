@@ -20,6 +20,14 @@ export class AddressController {
         return await this.addressService.createAddress(user.id, address);
     }
 
+    @Post("/add")
+    async addAddress(
+        @Body() address: CreateAddressDTO
+    ) {
+
+        return await this.addressService.addAddress(address);
+    }
+
     @Get("/owned")
     async getOwnedAddresses(
         @CurrentUser() user: User

@@ -35,6 +35,31 @@ export class AddressService {
         return address;
     }
 
+    async addAddress({
+        userId,
+        city,
+        country,
+        postalCode,
+        state,
+        street,
+        complement,
+        number,
+        }: CreateAddressDTO
+    ) {
+        return await this.prisma.address.create({
+            data: {
+                userId,
+                city,
+                country,
+                postalCode,
+                state,
+                street,
+                complement,
+                number
+            }
+        })
+    }
+
     async updateAddress(
         userId: string,
         addressId: string,

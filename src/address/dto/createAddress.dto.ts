@@ -29,4 +29,8 @@ export class CreateAddressDTO {
     @IsNotEmpty()
     @IsString()
     country: string;
+
+    @IsOptional()
+    @IsString()
+    userId: string;
 }
