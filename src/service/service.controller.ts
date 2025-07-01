@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseArrayPipe, Patch, Post, Put, Query, UseGuards } from "@nestjs/common";
 import { PoliciesGuard } from "src/casl/policies/policies.guard";
 import { ServiceService } from "./service.service";
 import { CreateServiceDTO } from "./dto/createService.dto";
@@ -33,6 +33,17 @@ export class ServiceController {
         return this.serviceService.getServices(user);
     }
 
+    @Get('occupied')
+    async getOccupiedSlots(
+        @Query(
+        'serviceIds',
+        new ParseArrayPipe({ items: String, separator: ',' }),
+        )
+        serviceIds: string[],
+        ): Promise<Record<string, Date[]>> {
+            return this.serviceService.getOccupiedSlots(serviceIds);
+    }
+
     @Get('/:id')
     async getService(
         @Param('id') id: string,
@@ -40,6 +51,7 @@ export class ServiceController {
     ) {
         return this.serviceService.getService(id, user);
     }
+
 
     @Put('/:id')
     @CheckPolicies(new UpdateServicePolicy())

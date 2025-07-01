@@ -42,6 +42,25 @@ export class ServiceService {
         });
     }
 
+    async getOccupiedSlots(
+        serviceIds: string[],
+    ): Promise<Record<string, Date[]>> {
+        const appointments = await this.prisma.appointment.findMany({
+            where: { serviceId: { in: serviceIds } },
+            select: { serviceId: true, dateTime: true },
+        });
+
+        const occupied: Record<string, Date[]> = {};
+        for (const id of serviceIds) {
+            occupied[id] = [];
+        }
+        for (const appt of appointments) {
+            occupied[appt.serviceId].push(appt.dateTime);
+        }
+
+        return occupied;
+    }
+
     async updateService(
         id: string, 
         {
