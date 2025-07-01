@@ -8,9 +8,6 @@ export class CreateAppointmentDTO {
     clientId: string;
 
     @IsNotEmpty()
-    barberId: string;
-
-    @IsNotEmpty()
     @IsDateString()
     dateTime: string;
 }

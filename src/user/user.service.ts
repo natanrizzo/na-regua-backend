@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { User } from "generated/prisma";
 import { UpdateUserDTO } from "./dto/updateUser.dto";
@@ -37,6 +37,17 @@ export class UserService {
                 role: true,
             }
         });
+    }
+
+    async getBarbers(user: User) {
+        if (user.role !== "Administrator") {
+            throw new UnauthorizedException("You don't have access to this.");
+        }
+
+        return await this.prisma.user.findMany({
+            where: { role: "Barber" },
+            omit: { password: true, email: true }
+        })
     }
 
     async updateUser(id: string, { name }: UpdateUserDTO): Promise<Omit<User, 'password'>> {

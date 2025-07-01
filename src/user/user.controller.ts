@@ -7,6 +7,8 @@ import { UpdateUserPolicy } from "./policies/updateUser.policy";
 import { DeleteUserPolicy } from "./policies/deleteUser.policy";
 import { CreateUserDTO } from "./dto/createUser.dto";
 import { CreateUserPolicy } from "./policies/createUser.policy";
+import { CurrentUser } from "src/auth/currentUser.decorator";
+import { User } from "generated/prisma";
 
 @Controller("users")
 @UseGuards(PoliciesGuard)
@@ -21,6 +23,13 @@ export class UserController {
         @Body() createUserDTO: CreateUserDTO
     ) {
         return await this.userService.createUser(createUserDTO);
+    }
+
+    @Get("/barbers")
+    async getBarbers(
+        @CurrentUser() user: User
+    ) {
+        return await this.userService.getBarbers(user);
     }
 
     @Get("/:id")
