@@ -15,7 +15,33 @@ export class AppointmentService {
         private readonly abilityFactory: AbilityFactory,
     ) {}
 
-    async createAppointment({ serviceId, clientId, barberId, dateTime }: CreateAppointmentDTO): Promise<Appointment> {
+    async createAppointment({ serviceId, clientId, dateTime }: CreateAppointmentDTO): Promise<Appointment> {
+        const barbers = await this.prisma.user.findMany({
+            where: { role: "Barber" },
+            select: { id: true }
+        })
+
+        if (barbers.length === 0) {
+            throw new NotFoundException("No barbers available.")
+        }
+
+        const occupiedAppointments = await this.prisma.appointment.findMany({
+            where: {
+                dateTime: dateTime,
+            },
+            select: {
+                barberId: true
+            }
+        });
+
+        const occupiedBarberIds = occupiedAppointments.map(a => a.barberId);
+
+        const freeBarber = barbers.find(b => !occupiedBarberIds.includes(b.id));
+
+        if (!freeBarber) {
+            throw new Error("No available barbers at the selected time.");
+        }
+
         return await this.prisma.appointment.create({
             data: {
                 dateTime,
@@ -26,7 +52,7 @@ export class AppointmentService {
                     connect: { id: clientId }
                 },
                 barber: {
-                    connect: { id: barberId }
+                    connect: { id: freeBarber.id }
                 }
             }
         })
