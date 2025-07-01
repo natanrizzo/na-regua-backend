@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { User } from "generated/prisma";
+import * as bcrypt from "bcrypt";
 import { UpdateUserDTO } from "./dto/updateUser.dto";
 
 @Injectable()
@@ -9,12 +10,14 @@ export class UserService {
         private readonly prisma: PrismaService
     ) {}
 
-    async createUser(user: { name, email, password }): Promise<Omit<User, 'password'>> {
+    async createUser(user: { name, email, password, role? }): Promise<Omit<User, 'password'>> {
+        const hash = await bcrypt.hash(user.password, 10);
         return await this.prisma.user.create({
             data: {
                 name: user.name,
                 email: user.email,
-                password: user.password
+                password: hash,
+                role: user.role
             },
             omit: {
                 password: true
